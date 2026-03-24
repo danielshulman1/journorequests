@@ -42,7 +42,10 @@
         <% terms.forEach(t => { %>
           <div class="tag">
             <%= t.term %>
-            <% if (!t.isActive) { %>(Inactive)<% } %>
+            <form action="/config/delete-term" method="POST" style="display:inline;">
+              <input type="hidden" name="id" value="<%= t.id %>">
+              <button type="submit" class="tag-remove" style="background:none; border:none; padding:0; cursor:pointer;">&times;</button>
+            </form>
           </div>
         <% }) %>
       </div>
@@ -59,6 +62,10 @@
         <% keywords.forEach(k => { %>
           <div class="tag" style="background:#e8f0fe; color:var(--primary); border-color:#d2e3fc;">
             <%= k.keyword %>
+            <form action="/config/delete-keyword" method="POST" style="display:inline;">
+              <input type="hidden" name="id" value="<%= k.id %>">
+              <button type="submit" class="tag-remove" style="background:none; border:none; padding:0; cursor:pointer;">&times;</button>
+            </form>
           </div>
         <% }) %>
       </div>

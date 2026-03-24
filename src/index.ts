@@ -87,6 +87,14 @@ app.post("/config/add-term", async (req, res) => {
   res.redirect("/config?msg=Term+added");
 });
 
+app.post("/config/delete-term", async (req, res) => {
+  const { id } = req.body;
+  if (id) {
+    await prisma.searchTerm.delete({ where: { id } });
+  }
+  res.redirect("/config?msg=Term+deleted");
+});
+
 app.post("/config/add-keyword", async (req, res) => {
   const { keyword } = req.body;
   if (keyword) {
@@ -97,6 +105,14 @@ app.post("/config/add-keyword", async (req, res) => {
     });
   }
   res.redirect("/config?msg=Keyword+added");
+});
+
+app.post("/config/delete-keyword", async (req, res) => {
+  const { id } = req.body;
+  if (id) {
+    await prisma.nicheKeyword.delete({ where: { id } });
+  }
+  res.redirect("/config?msg=Keyword+deleted");
 });
 
 app.get("/history", async (req, res) => {
