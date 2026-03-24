@@ -10,48 +10,97 @@ export class SchedulerService {
   start() {
     console.info("Scheduler started.");
 
-    // Hourly Task
-    cron.schedule(process.env.CRON_SCHEDULE || "0 * * * *", async () => {
-      console.info("Running hourly monitor scan...");
-      const newPosts = await this.monitor.run();
-
-      // Check for High Priority - Instant Alert mode
-      const highPriority = newPosts.filter(p => p.priority === "High");
-      if (highPriority.length > 0) {
-        console.info(`Found ${highPriority.length} high priority posts! Sending instant alert...`);
-        await this.emailer.sendDigest(highPriority);
-        // Mark these as sent
-        // await this.monitor.markAsSent(highPriority.map(p => p.externalId)); // Wait, DB ID is needed
-      }
-    });
-
-    // Daily Digest Task
-    cron.schedule(process.env.DIGEST_SCHEDULE || "0 9 * * *", async () => {
-      console.info("Running daily digest scan...");
-      const pending = await prisma.post.findMany({
-        where: { isSent: false },
-        orderBy: { relevanceScore: "desc" }
-      });
-
-      if (pending.length > 0) {
-        const normalized = pending.map((p) => ({
-          ...p,
-          postedAt: p.postedAt ? new Date(p.postedAt) : new Date(),
-          matchedTerms: (p.matchedTerms || "").split(", "),
-          matchedKeywords: (p.matchedKeywords || "").split(", "),
-          priority: p.priority as any
-        }));
-
-        await this.emailer.sendDigest(normalized as any);
-        await prisma.post.updateMany({
-          where: { id: { in: pending.map(p => p.id) } },
-          data: { isSent: true, sentAt: new Date() }
-        });
-      }
+    cron.schedule(process.env.SCHEDULER_TICK_CRON || "*/5 * * * *", async () => {
+      console.info("Running scheduled user checks...");
+      await this.runScheduledWork();
     });
   }
 
-  async manualRun() {
-    return await this.monitor.run(true);
+  async runScheduledWork(now = new Date()) {
+    const users = await prisma.user.findMany({
+      select: {
+        id: true,
+        email: true,
+        scanEnabled: true,
+        scanIntervalMinutes: true,
+        lastScanRunAt: true,
+        emailEnabled: true,
+        emailIntervalMinutes: true,
+        lastEmailRunAt: true,
+      },
+    });
+
+    for (const user of users) {
+      try {
+        if (user.scanEnabled && this.isDue(user.lastScanRunAt, user.scanIntervalMinutes, now)) {
+          console.info(`Running scheduled scan for ${user.email}...`);
+          await this.monitor.runForUser(user.id);
+          await prisma.user.update({
+            where: { id: user.id },
+            data: { lastScanRunAt: now },
+          });
+        }
+
+        if (user.emailEnabled && this.isDue(user.lastEmailRunAt, user.emailIntervalMinutes, now)) {
+          console.info(`Running scheduled email digest for ${user.email}...`);
+          const pendingPosts = await this.monitor.getPendingPosts(user.id);
+
+          if (pendingPosts.length > 0) {
+            await this.emailer.sendDigest(this.monitor.normalizeStoredPosts(pendingPosts), user.email);
+            await this.monitor.markAsSent(
+              pendingPosts.map((post) => post.id),
+              user.id,
+            );
+          }
+
+          await prisma.user.update({
+            where: { id: user.id },
+            data: { lastEmailRunAt: now },
+          });
+        }
+      } catch (error) {
+        console.error(`Scheduled work failed for ${user.email}:`, error);
+      }
+    }
+  }
+
+  async manualRun(userId: string) {
+    return this.monitor.runForUser(userId, true);
+  }
+
+  async manualEmail(userId: string) {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { email: true },
+    });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const pendingPosts = await this.monitor.getPendingPosts(userId);
+    if (pendingPosts.length === 0) {
+      return { sentCount: 0 };
+    }
+
+    await this.emailer.sendDigest(this.monitor.normalizeStoredPosts(pendingPosts), user.email);
+    await this.monitor.markAsSent(
+      pendingPosts.map((post) => post.id),
+      userId,
+    );
+    await prisma.user.update({
+      where: { id: userId },
+      data: { lastEmailRunAt: new Date() },
+    });
+
+    return { sentCount: pendingPosts.length };
+  }
+
+  private isDue(lastRunAt: Date | null, intervalMinutes: number, now: Date) {
+    if (!lastRunAt) {
+      return true;
+    }
+
+    return now.getTime() - lastRunAt.getTime() >= intervalMinutes * 60 * 1000;
   }
 }

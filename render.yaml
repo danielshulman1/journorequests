@@ -1,0 +1,59 @@
+services:
+  - type: web
+    name: journorequests
+    env: docker
+    plan: starter
+    dockerfilePath: ./Dockerfile
+    autoDeploy: true
+    healthCheckPath: /login
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
+      - key: CRON_SECRET
+        sync: false
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: RESEND_TEST_MODE
+        value: false
+      - key: APP_URL
+        sync: false
+      - key: SCHEDULER_TICK_CRON
+        value: "*/5 * * * *"
+      - key: RELEVANCE_THRESHOLD
+        value: 50
+      - key: PLAYWRIGHT_SCRAPER_ENABLED
+        value: true
+      - key: PLAYWRIGHT_HEADLESS
+        value: true
+      - key: PLAYWRIGHT_TIMEOUT_MS
+        value: 45000
+      - key: PLAYWRIGHT_MAX_POSTS_PER_TERM
+        value: 10
+      - key: X_SCRAPER_LOGIN
+        sync: false
+      - key: X_SCRAPER_USERNAME
+        sync: false
+      - key: X_SCRAPER_PASSWORD
+        sync: false
+      - key: X_SCRAPER_STORAGE_STATE
+        value: .scraper-state/x.json
+      - key: LINKEDIN_SCRAPER_EMAIL
+        sync: false
+      - key: LINKEDIN_SCRAPER_PASSWORD
+        sync: false
+      - key: LINKEDIN_SCRAPER_STORAGE_STATE
+        value: .scraper-state/linkedin.json
+      - key: RAPIDAPI_KEY
+        sync: false
+      - key: LINKEDIN_RAPIDAPI_KEY
+        sync: false
+      - key: X_RAPIDAPI_HOST
+        value: twitter-api47.p.rapidapi.com
+      - key: X_RAPIDAPI_URL
+        value: https://twitter-api47.p.rapidapi.com/v2/search

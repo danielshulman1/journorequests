@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Create Account - Journo Monitor</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --primary: #1a73e8; --bg: #f8f9fa; --text: #202124; --text-dim: #5f6368; --border: #e8eaed; --danger: #d93025; }
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 24px; background: radial-gradient(circle at top, #e8f0fe, #f8f9fa 45%); font-family: "Inter", sans-serif; color: var(--text); }
+    .card { width: 100%; max-width: 440px; background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 32px; box-shadow: 0 24px 60px rgba(26, 115, 232, 0.08); }
+    h1 { margin: 0 0 8px; color: var(--primary); }
+    p { color: var(--text-dim); margin: 0 0 24px; }
+    label { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 8px; }
+    input { width: 100%; box-sizing: border-box; padding: 12px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.95rem; margin-bottom: 18px; }
+    button { width: 100%; border: none; background: var(--primary); color: #fff; border-radius: 8px; padding: 12px 16px; font-size: 0.95rem; font-weight: 600; cursor: pointer; }
+    .alert { margin-bottom: 16px; padding: 12px 14px; border-radius: 8px; font-size: 0.9rem; }
+    .alert-error { background: #fce8e6; color: var(--danger); }
+    .alert-message { background: #e6f4ea; color: #1e8e3e; }
+    .footer { margin-top: 20px; text-align: center; font-size: 0.9rem; color: var(--text-dim); }
+    .footer a { color: var(--primary); text-decoration: none; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Create Account</h1>
+    <p>Each user gets separate terms, keywords, posts, and run history.</p>
+
+    <% if (message) { %>
+      <div class="alert alert-message"><%= message %></div>
+    <% } %>
+
+    <% if (error) { %>
+      <div class="alert alert-error"><%= error %></div>
+    <% } %>
+
+    <form action="/register" method="POST">
+      <label for="name">Name</label>
+      <input id="name" type="text" name="name" value="<%= values.name %>" autocomplete="name">
+
+      <label for="email">Email</label>
+      <input id="email" type="email" name="email" value="<%= values.email %>" autocomplete="email" required>
+
+      <label for="password">Password</label>
+      <input id="password" type="password" name="password" autocomplete="new-password" minlength="8" required>
+
+      <label for="confirmPassword">Confirm Password</label>
+      <input id="confirmPassword" type="password" name="confirmPassword" autocomplete="new-password" minlength="8" required>
+
+      <button type="submit">Create Account</button>
+    </form>
+
+    <div class="footer">
+      Already have an account? <a href="/login">Log in</a>
+    </div>
+  </div>
+</body>
+</html>

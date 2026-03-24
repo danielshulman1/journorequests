@@ -5,46 +5,108 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    :root { --primary: #1a73e8; --bg: #f8f9fa; --card-bg: #fff; --text: #202124; --text-dim: #5f6368; --border: #e8eaed; }
-    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; }
-    .nav { background: #fff; border-bottom: 1px solid var(--border); padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; }
-    .nav-links a { margin-left: 20px; text-decoration: none; color: var(--text-dim); font-weight: 500; }
-    .container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
-    .card { background: #fff; border-radius: 12px; padding: 30px; margin-bottom: 40px; border: 1px solid var(--border); }
+    :root { --primary: #1a73e8; --bg: #f8f9fa; --card-bg: #fff; --text: #202124; --text-dim: #5f6368; --border: #e8eaed; --danger: #d93025; }
+    body { font-family: "Inter", sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; }
+    .nav { background: #fff; border-bottom: 1px solid var(--border); padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; gap: 20px; }
+    .brand { font-size: 1.25rem; color: var(--primary); margin: 0; }
+    .nav-right { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; justify-content: flex-end; }
+    .nav-links { display: flex; gap: 20px; }
+    .nav-links a { text-decoration: none; color: var(--text-dim); font-weight: 500; }
+    .user-chip { background: #f1f3f4; border: 1px solid var(--border); border-radius: 999px; padding: 8px 14px; font-size: 0.85rem; color: var(--text-dim); }
+    .container { max-width: 960px; margin: 40px auto; padding: 0 20px; }
+    .card { background: #fff; border-radius: 12px; padding: 30px; margin-bottom: 32px; border: 1px solid var(--border); }
     h2 { margin-top: 0; color: var(--primary); font-size: 1.25rem; }
-    .form-group { display: flex; gap: 10px; margin-bottom: 30px; }
-    .form-input { flex: 1; padding: 10px 15px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.95rem; }
-    .btn { background: var(--primary); color: #fff; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: 0.2s; }
+    .form-group { display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; }
+    .form-input, .form-select { flex: 1; min-width: 240px; padding: 10px 15px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.95rem; background: #fff; }
+    .btn { background: var(--primary); color: #fff; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.9rem; }
+    .btn-secondary { background: #fff; color: var(--primary); border: 1px solid var(--primary); }
     .tag-list { display: flex; flex-wrap: wrap; gap: 10px; }
     .tag { background: #f1f3f4; padding: 6px 15px; border-radius: 20px; font-size: 0.9rem; color: var(--text); display: flex; align-items: center; gap: 8px; border: 1px solid #dee2e6; }
-    .tag-remove { color: #d93025; text-decoration: none; font-weight: bold; font-size: 1.1rem; }
+    .tag-remove { color: var(--danger); background: none; border: none; padding: 0; cursor: pointer; font-weight: bold; font-size: 1.1rem; }
+    .toast { position: fixed; bottom: 20px; right: 20px; background: #323232; color: #fff; padding: 12px 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); z-index: 2000; }
+    .settings-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; margin-bottom: 22px; }
+    .setting { border: 1px solid var(--border); border-radius: 10px; padding: 18px; background: #fafbfc; }
+    .setting label { display: block; margin-bottom: 8px; font-weight: 600; }
+    .toggle { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .toggle input { width: 18px; height: 18px; }
+    .help { color: var(--text-dim); font-size: 0.85rem; margin: 0; }
+    .meta-list { display: flex; gap: 16px; flex-wrap: wrap; color: var(--text-dim); font-size: 0.85rem; margin-top: 14px; }
   </style>
 </head>
 <body>
   <div class="nav">
-    <h1 style="font-size:1.25rem; color:var(--primary); margin:0;">JournoMonitor</h1>
-    <div class="nav-links">
-      <a href="/">Dashboard</a>
-      <a href="/config">Configure Keywords</a>
-      <a href="/history">Run History</a>
+    <h1 class="brand">JournoMonitor</h1>
+    <div class="nav-right">
+      <div class="nav-links">
+        <a href="/">Dashboard</a>
+        <a href="/config">Configure Keywords</a>
+        <a href="/history">Run History</a>
+      </div>
+      <div class="user-chip"><%= currentUser.name || currentUser.email %></div>
+      <form action="/logout" method="POST" style="margin:0;">
+        <button type="submit" class="btn btn-secondary">Log Out</button>
+      </form>
     </div>
   </div>
 
   <div class="container">
     <div class="card">
-      <h2>Search Terms (Hashtags/Phrases)</h2>
-      <p style="color:var(--text-dim); font-size:0.9rem; margin-bottom:20px;">The app searches for these phrases on social media (X, LinkedIn).</p>
+      <h2>Schedule And Email</h2>
+      <p style="color:var(--text-dim); font-size:0.9rem; margin-bottom:20px;">Automatic digests are sent to <strong><%= settings?.email || currentUser.email %></strong>.</p>
+      <form action="/config/schedule" method="POST">
+        <div class="settings-grid">
+          <div class="setting">
+            <div class="toggle">
+              <input id="scanEnabled" type="checkbox" name="scanEnabled" <%= settings?.scanEnabled ? "checked" : "" %>>
+              <label for="scanEnabled" style="margin:0;">Enable automatic searches</label>
+            </div>
+            <label for="scanIntervalMinutes">Search interval</label>
+            <select id="scanIntervalMinutes" name="scanIntervalMinutes" class="form-select">
+              <% scanIntervalOptions.forEach(option => { %>
+                <option value="<%= option.value %>" <%= option.value === settings?.scanIntervalMinutes ? "selected" : "" %>><%= option.label %></option>
+              <% }) %>
+            </select>
+            <p class="help">The app checks X and LinkedIn on this cadence for this account.</p>
+          </div>
+
+          <div class="setting">
+            <div class="toggle">
+              <input id="emailEnabled" type="checkbox" name="emailEnabled" <%= settings?.emailEnabled ? "checked" : "" %>>
+              <label for="emailEnabled" style="margin:0;">Enable digest emails</label>
+            </div>
+            <label for="emailIntervalMinutes">Email interval</label>
+            <select id="emailIntervalMinutes" name="emailIntervalMinutes" class="form-select">
+              <% emailIntervalOptions.forEach(option => { %>
+                <option value="<%= option.value %>" <%= option.value === settings?.emailIntervalMinutes ? "selected" : "" %>><%= option.label %></option>
+              <% }) %>
+            </select>
+            <p class="help">Only unsent results for this account are included in each digest.</p>
+          </div>
+        </div>
+
+        <button type="submit" class="btn">Save Schedule</button>
+
+        <div class="meta-list">
+          <span>Last scan: <%= settings?.lastScanRunAt ? new Date(settings.lastScanRunAt).toLocaleString() : "Never" %></span>
+          <span>Last email run: <%= settings?.lastEmailRunAt ? new Date(settings.lastEmailRunAt).toLocaleString() : "Never" %></span>
+        </div>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>Search Terms</h2>
+      <p style="color:var(--text-dim); font-size:0.9rem; margin-bottom:20px;">These phrases are used to search X and LinkedIn for journalist requests.</p>
       <form action="/config/add-term" method="POST" class="form-group">
         <input type="text" name="term" class="form-input" placeholder="e.g. #journorequest" required>
         <button type="submit" class="btn">Add Term</button>
       </form>
       <div class="tag-list">
-        <% terms.forEach(t => { %>
+        <% terms.forEach(term => { %>
           <div class="tag">
-            <%= t.term %>
+            <%= term.term %>
             <form action="/config/delete-term" method="POST" style="display:inline;">
-              <input type="hidden" name="id" value="<%= t.id %>">
-              <button type="submit" class="tag-remove" style="background:none; border:none; padding:0; cursor:pointer;">&times;</button>
+              <input type="hidden" name="id" value="<%= term.id %>">
+              <button type="submit" class="tag-remove" aria-label="Remove term">&times;</button>
             </form>
           </div>
         <% }) %>
@@ -52,24 +114,34 @@
     </div>
 
     <div class="card">
-      <h2>Niche Keywords (For Relevance Scoring)</h2>
-      <p style="color:var(--text-dim); font-size:0.9rem; margin-bottom:20px;">Found posts are scored higher if they contain these keywords related to your expertise.</p>
+      <h2>Niche Keywords</h2>
+      <p style="color:var(--text-dim); font-size:0.9rem; margin-bottom:20px;">Matching posts are scored higher when they contain these keywords.</p>
       <form action="/config/add-keyword" method="POST" class="form-group">
         <input type="text" name="keyword" class="form-input" placeholder="e.g. AI, automation" required>
         <button type="submit" class="btn">Add Keyword</button>
       </form>
       <div class="tag-list">
-        <% keywords.forEach(k => { %>
+        <% keywords.forEach(keyword => { %>
           <div class="tag" style="background:#e8f0fe; color:var(--primary); border-color:#d2e3fc;">
-            <%= k.keyword %>
+            <%= keyword.keyword %>
             <form action="/config/delete-keyword" method="POST" style="display:inline;">
-              <input type="hidden" name="id" value="<%= k.id %>">
-              <button type="submit" class="tag-remove" style="background:none; border:none; padding:0; cursor:pointer;">&times;</button>
+              <input type="hidden" name="id" value="<%= keyword.id %>">
+              <button type="submit" class="tag-remove" aria-label="Remove keyword">&times;</button>
             </form>
           </div>
         <% }) %>
       </div>
     </div>
   </div>
+
+  <% if (message) { %>
+    <div class="toast"><%= message %></div>
+    <script>
+      setTimeout(() => {
+        const toast = document.querySelector(".toast");
+        if (toast) toast.remove();
+      }, 4000);
+    </script>
+  <% } %>
 </body>
 </html>

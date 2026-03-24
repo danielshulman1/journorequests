@@ -12,7 +12,7 @@ export class RelevanceScorer {
 
     // 1. Matched Search Terms
     terms.forEach(term => {
-      if (textLower.includes(term.toLowerCase())) {
+      if (this.containsToken(textLower, term)) {
         matchedTerms.push(term);
         score += 10;
       }
@@ -20,7 +20,7 @@ export class RelevanceScorer {
 
     // 2. Niche Relevance (High weight)
     keywords.forEach(keyword => {
-      if (textLower.includes(keyword.toLowerCase())) {
+      if (this.containsToken(textLower, keyword)) {
         matchedKeywords.push(keyword);
         score += 20;
       }
@@ -48,7 +48,7 @@ export class RelevanceScorer {
     // 5. Journalist Check
     let isJournalist = false;
     journalistKeywords.forEach(jk => {
-      if (authorLower.includes(jk.toLowerCase())) {
+      if (this.containsToken(authorLower, jk)) {
         isJournalist = true;
         score += 20;
       }
@@ -84,5 +84,23 @@ export class RelevanceScorer {
       hasDeadline,
       isJournalist,
     };
+  }
+
+  private static containsToken(haystack: string, needle: string) {
+    const normalizedNeedle = needle.toLowerCase().trim();
+    if (!normalizedNeedle) {
+      return false;
+    }
+
+    if (/^[a-z0-9]+(?:\s+[a-z0-9]+)*$/i.test(normalizedNeedle)) {
+      const pattern = new RegExp(`\\b${this.escapeRegExp(normalizedNeedle).replace(/\s+/g, "\\s+")}\\b`, "i");
+      return pattern.test(haystack);
+    }
+
+    return haystack.includes(normalizedNeedle);
+  }
+
+  private static escapeRegExp(value: string) {
+    return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   }
 }

@@ -3,13 +3,14 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
 }
 
 model Post {
   id              String   @id @default(cuid())
+  userId          String?
   platform        String
-  externalId      String   @unique
+  externalId      String
   text            String
   authorName      String?
   authorUrl       String?
@@ -26,25 +27,40 @@ model Post {
   isUrgent        Boolean  @default(false)
   hasDeadline     Boolean  @default(false)
   isJournalist    Boolean  @default(false)
+
+  user            User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, externalId])
 }
 
 model SearchTerm {
   id        String   @id @default(cuid())
-  term      String   @unique
+  userId    String?
+  term      String
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
+
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, term])
 }
 
 model NicheKeyword {
   id        String   @id @default(cuid())
-  keyword   String   @unique
+  userId    String?
+  keyword   String
   weight    Float    @default(1.0)
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
+
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, keyword])
 }
 
 model RunLog {
   id             String   @id @default(cuid())
+  userId         String?
   startTime      DateTime @default(now())
   endTime        DateTime?
   status         String   @default("running")
@@ -52,4 +68,36 @@ model RunLog {
   resultsEmailed Int      @default(0)
   errorMessage   String?
   platform       String?
+
+  user           User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id                   String        @id @default(cuid())
+  email                String        @unique
+  name                 String?
+  passwordHash         String
+  scanEnabled          Boolean       @default(true)
+  scanIntervalMinutes  Int           @default(60)
+  lastScanRunAt        DateTime?
+  emailEnabled         Boolean       @default(true)
+  emailIntervalMinutes Int           @default(1440)
+  lastEmailRunAt       DateTime?
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+  posts                Post[]
+  searchTerms          SearchTerm[]
+  nicheKeywords        NicheKeyword[]
+  runLogs              RunLog[]
+  sessions             Session[]
+}
+
+model Session {
+  id         String   @id @default(cuid())
+  userId     String
+  tokenHash  String   @unique
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

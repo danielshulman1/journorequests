@@ -1,112 +1,107 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f7f9; margin: 0; padding: 0; color: #333; }
-    .container { max-width: 650px; margin: 40px auto; background: #ffffff; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); overflow: hidden; }
-    .header { background: #1a73e8; color: #fff; padding: 30px; text-align: center; }
-    .header h1 { margin: 0; font-size: 24px; letter-spacing: 1px; }
-    .summary-text { font-size: 16px; margin-top: 10px; opacity: 0.9; }
-    .content { padding: 30px; }
-    .section-title { font-size: 20px; font-weight: bold; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; color: #1a73e8; }
-    .section-title.high { color: #d93025; border-color: #fce8e6; }
-    .section-title.medium { color: #f29900; border-color: #fef7e0; }
-    .section-title.low { color: #188038; border-color: #e6f4ea; }
-    .request-card { background: #fff; border-radius: 8px; border-left: 5px solid #ccc; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-    .request-card.High { border-left-color: #d93025; }
-    .request-card.Medium { border-left-color: #f29900; }
-    .request-card.Low { border-left-color: #188038; }
-    .card-header { display: flex; justify-content: space-between; font-size: 12px; color: #666; margin-bottom: 10px; }
-    .platform-badge { font-weight: bold; text-transform: uppercase; padding: 2px 6px; border-radius: 4px; background: #eee; color: #555; font-size: 10px; }
-    .author { font-weight: bold; color: #202124; margin-bottom: 8px; font-size: 16px; }
-    .snippet { line-height: 1.6; margin-bottom: 15px; color: #444; }
-    .keywords { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 15px; }
-    .keyword { font-size: 10px; padding: 3px 8px; border-radius: 20px; background: #e8f0fe; color: #1a73e8; border: 1px solid #d2e3fc; }
-    .score { font-weight: bold; font-size: 13px; color: #1a73e8; }
-    .btn { display: inline-block; padding: 10px 20px; background: #1a73e8; color: #fff; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 14px; transition: 0.2s; }
-    .btn:hover { background: #1557b0; }
-    .footer { text-align: center; padding: 20px; font-size: 12px; color: #888; border-top: 1px solid #eee; }
-    .footer a { color: #1a73e8; text-decoration: none; }
+    body { font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; background: #f4f7f9; margin: 0; padding: 0; color: #333; }
+    .wrapper { width: 100%; background: #f4f7f9; padding: 24px 12px; box-sizing: border-box; }
+    .container { max-width: 900px; margin: 0 auto; background: #ffffff; border-radius: 12px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08); overflow: hidden; }
+    .header { background: #1a73e8; color: #fff; padding: 28px 32px; }
+    .header h1 { margin: 0; font-size: 24px; line-height: 1.2; }
+    .header p { margin: 8px 0 0; opacity: 0.92; font-size: 15px; line-height: 1.5; }
+    .content { padding: 24px 28px 32px; }
+    .summary { margin: 0 0 20px; color: #5f6368; font-size: 14px; line-height: 1.6; }
+    table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    th { text-align: left; background: #f8f9fa; color: #5f6368; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; padding: 12px; border-bottom: 1px solid #e8eaed; }
+    td { vertical-align: top; padding: 14px 12px; border-bottom: 1px solid #e8eaed; font-size: 14px; line-height: 1.6; word-break: break-word; }
+    .priority { font-weight: 700; }
+    .priority.High { color: #d93025; }
+    .priority.Medium { color: #f29900; }
+    .priority.Low { color: #188038; }
+    .platform { font-weight: 700; color: #202124; }
+    .post-text { color: #3c4043; white-space: pre-wrap; word-break: break-word; }
+    .meta { color: #5f6368; font-size: 12px; margin-top: 6px; line-height: 1.5; }
+    .open-link { display: inline-block; padding: 8px 12px; border-radius: 8px; background: #e8f0fe; color: #1a73e8; font-weight: 600; }
+    .mobile-label { display: none; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: #5f6368; margin-bottom: 4px; font-weight: 700; }
+    a { color: #1a73e8; text-decoration: none; }
+    .footer { text-align: center; padding: 18px 24px 24px; font-size: 12px; color: #888; border-top: 1px solid #eee; line-height: 1.6; }
+
+    @media only screen and (max-width: 640px) {
+      .wrapper { padding: 0; }
+      .container { border-radius: 0; box-shadow: none; }
+      .header { padding: 22px 20px; }
+      .header h1 { font-size: 21px; }
+      .header p { font-size: 14px; }
+      .content { padding: 18px 16px 24px; }
+      table, tbody, tr, td { display: block; width: 100% !important; }
+      thead { display: none; }
+      tr { border: 1px solid #e8eaed; border-radius: 12px; margin-bottom: 14px; overflow: hidden; }
+      td { padding: 12px 14px; border-bottom: 1px solid #eef1f4; }
+      td:last-child { border-bottom: none; }
+      .mobile-label { display: block; }
+      .open-link { width: 100%; text-align: center; box-sizing: border-box; padding: 10px 12px; }
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <h1>Journo Request Digest</h1>
-      <p class="summary-text"><%= date %> | <%= totalCount %> requests found</p>
-    </div>
-    
-    <div class="content">
-      <% if (posts.High && posts.High.length > 0) { %>
-        <div class="section-title high">High Priority</div>
-        <% posts.High.forEach(item => { %>
-          <div class="request-card High">
-            <div class="card-header">
-              <span class="platform-badge"><%= item.platform %></span>
-              <span><%= item.postedAt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) %></span>
-            </div>
-            <div class="author"><a href="<%= item.authorUrl %>" style="color:inherit; text-decoration:none;"><%= item.authorName %></a></div>
-            <div class="snippet"><%= item.text %></div>
-            <div class="keywords">
-              <% item.matchedKeywords.forEach(kw => { %>
-                <span class="keyword"><%= kw %></span>
-              <% }) %>
-              <% item.matchedTerms.forEach(term => { %>
-                <span class="keyword" style="background:#fef7e0; color:#f29900; border-color:#feefc3;"><%= term %></span>
-              <% }) %>
-            </div>
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-              <span class="score">Relevance: <%= item.relevanceScore %>%</span>
-              <a href="<%= item.postUrl %>" class="btn">View Post</a>
-            </div>
-          </div>
-        <% }) %>
-      <% } %>
+  <div class="wrapper">
+    <div class="container">
+      <div class="header">
+        <h1>Journo Request Digest</h1>
+        <p><%= date %> | <%= totalCount %> new request<%= totalCount === 1 ? "" : "s" %></p>
+      </div>
 
-      <% if (posts.Medium && posts.Medium.length > 0) { %>
-        <div class="section-title medium">Medium Priority</div>
-        <% posts.Medium.forEach(item => { %>
-          <div class="request-card Medium">
-            <div class="card-header">
-              <span class="platform-badge"><%= item.platform %></span>
-              <span><%= item.postedAt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) %></span>
-            </div>
-            <div class="author"><%= item.authorName %></div>
-            <div class="snippet"><%= item.text %></div>
-            <div class="keywords">
-              <% item.matchedKeywords.forEach(kw => { %>
-                <span class="keyword"><%= kw %></span>
-              <% }) %>
-            </div>
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-              <span class="score">Relevance: <%= item.relevanceScore %>%</span>
-              <a href="<%= item.postUrl %>" class="btn">View Post</a>
-            </div>
-          </div>
-        <% }) %>
-      <% } %>
+      <div class="content">
+        <p class="summary">Each row links directly to the original request and stays readable on mobile and desktop.</p>
 
-      <% if (posts.Low && posts.Low.length > 0) { %>
-        <div class="section-title low">Low Priority</div>
-        <% posts.Low.forEach(item => { %>
-          <div class="request-card Low">
-            <div class="card-header">
-              <span class="platform-badge"><%= item.platform %></span>
-              <span><%= item.postedAt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) %></span>
-            </div>
-            <div class="author"><%= item.authorName %></div>
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-              <span class="score">Score: <%= item.relevanceScore %></span>
-              <a href="<%= item.postUrl %>" style="color:#1a73e8; font-weight:bold; font-size:14px; text-decoration:none;">View Original</a>
-            </div>
-          </div>
-        <% }) %>
-      <% } %>
-    </div>
-    
-    <div class="footer">
-      Sent by Journo Request Monitor. <br>
-      <a href="http://localhost:3000">Manage your keywords</a>
+        <table role="presentation" cellspacing="0" cellpadding="0">
+          <thead>
+            <tr>
+              <th style="width: 90px;">Priority</th>
+              <th style="width: 140px;">Platform</th>
+              <th style="width: 150px;">Author</th>
+              <th>Request</th>
+              <th style="width: 96px;">Link</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% posts.forEach(post => { %>
+              <tr>
+                <td>
+                  <div class="mobile-label">Priority</div>
+                  <div class="priority <%= post.priority %>"><%= post.priority %></div>
+                </td>
+                <td>
+                  <div class="mobile-label">Platform</div>
+                  <div class="platform"><%= post.platform %></div>
+                  <div class="meta"><%= post.postedAt.toLocaleString() %></div>
+                </td>
+                <td>
+                  <div class="mobile-label">Author</div>
+                  <% if (post.authorUrl) { %>
+                    <a href="<%= post.authorUrl %>"><%= post.authorName %></a>
+                  <% } else { %>
+                    <%= post.authorName %>
+                  <% } %>
+                </td>
+                <td>
+                  <div class="mobile-label">Request</div>
+                  <div class="post-text"><%= post.text %></div>
+                </td>
+                <td>
+                  <div class="mobile-label">Link</div>
+                  <a href="<%= post.postUrl %>" class="open-link">Open</a>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="footer">
+        Sent by Journo Request Monitor.<br>
+        <a href="<%= dashboardUrl %>">Manage your account</a>
+      </div>
     </div>
   </div>
 </body>
