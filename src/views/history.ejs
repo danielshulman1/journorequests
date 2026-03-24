@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Run History - Journo Monitor</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --primary: #1a73e8; --bg: #f8f9fa; --card-bg: #fff; --text: #202124; --text-dim: #5f6368; --border: #e8eaed; --high: #d93025; --low: #1e8e3e; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; }
+    .nav { background: #fff; border-bottom: 1px solid var(--border); padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; }
+    .nav-links a { margin-left: 20px; text-decoration: none; color: var(--text-dim); font-weight: 500; }
+    .container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
+    table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+    th { background: #f8f9fa; padding: 15px; text-align: left; border-bottom: 2px solid var(--border); font-size: 0.8rem; text-transform: uppercase; color: var(--text-dim); }
+    td { padding: 15px; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+    .status-SUCCESS { color: var(--low); font-weight: 600; }
+    .status-FAILURE { color: var(--high); font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="nav">
+    <h1 style="font-size:1.25rem; color:var(--primary); margin:0;">JournoMonitor</h1>
+    <div class="nav-links">
+      <a href="/">Dashboard</a>
+      <a href="/config">Configure Keywords</a>
+      <a href="/history">Run History</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <h2>Run Logs</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Start Time</th>
+          <th>Status</th>
+          <th>Results Found</th>
+          <th>Results Emailed</th>
+          <th>Error</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% history.forEach(log => { %>
+          <tr>
+            <td><%= new Date(log.startTime).toLocaleString() %></td>
+            <td class="status-<%= log.status %>"><%= log.status %></td>
+            <td><%= log.resultsFound %></td>
+            <td><%= log.resultsEmailed %></td>
+            <td><%= log.errorMessage || '-' %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

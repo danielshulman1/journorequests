@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Configure Keywords - Journo Monitor</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --primary: #1a73e8; --bg: #f8f9fa; --card-bg: #fff; --text: #202124; --text-dim: #5f6368; --border: #e8eaed; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; }
+    .nav { background: #fff; border-bottom: 1px solid var(--border); padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; }
+    .nav-links a { margin-left: 20px; text-decoration: none; color: var(--text-dim); font-weight: 500; }
+    .container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+    .card { background: #fff; border-radius: 12px; padding: 30px; margin-bottom: 40px; border: 1px solid var(--border); }
+    h2 { margin-top: 0; color: var(--primary); font-size: 1.25rem; }
+    .form-group { display: flex; gap: 10px; margin-bottom: 30px; }
+    .form-input { flex: 1; padding: 10px 15px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.95rem; }
+    .btn { background: var(--primary); color: #fff; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: 0.2s; }
+    .tag-list { display: flex; flex-wrap: wrap; gap: 10px; }
+    .tag { background: #f1f3f4; padding: 6px 15px; border-radius: 20px; font-size: 0.9rem; color: var(--text); display: flex; align-items: center; gap: 8px; border: 1px solid #dee2e6; }
+    .tag-remove { color: #d93025; text-decoration: none; font-weight: bold; font-size: 1.1rem; }
+  </style>
+</head>
+<body>
+  <div class="nav">
+    <h1 style="font-size:1.25rem; color:var(--primary); margin:0;">JournoMonitor</h1>
+    <div class="nav-links">
+      <a href="/">Dashboard</a>
+      <a href="/config">Configure Keywords</a>
+      <a href="/history">Run History</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="card">
+      <h2>Search Terms (Hashtags/Phrases)</h2>
+      <p style="color:var(--text-dim); font-size:0.9rem; margin-bottom:20px;">The app searches for these phrases on social media (X, LinkedIn).</p>
+      <form action="/config/add-term" method="POST" class="form-group">
+        <input type="text" name="term" class="form-input" placeholder="e.g. #journorequest" required>
+        <button type="submit" class="btn">Add Term</button>
+      </form>
+      <div class="tag-list">
+        <% terms.forEach(t => { %>
+          <div class="tag">
+            <%= t.term %>
+            <% if (!t.isActive) { %>(Inactive)<% } %>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Niche Keywords (For Relevance Scoring)</h2>
+      <p style="color:var(--text-dim); font-size:0.9rem; margin-bottom:20px;">Found posts are scored higher if they contain these keywords related to your expertise.</p>
+      <form action="/config/add-keyword" method="POST" class="form-group">
+        <input type="text" name="keyword" class="form-input" placeholder="e.g. AI, automation" required>
+        <button type="submit" class="btn">Add Keyword</button>
+      </form>
+      <div class="tag-list">
+        <% keywords.forEach(k => { %>
+          <div class="tag" style="background:#e8f0fe; color:var(--primary); border-color:#d2e3fc;">
+            <%= k.keyword %>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
