@@ -23,19 +23,20 @@ export class LinkedInConnector extends PlatformConnector {
       try {
         const options = {
           method: 'GET',
-          url: 'https://real-time-linkedin-scraper.p.rapidapi.com/search-posts',
+          url: 'https://linkedin-api-all-endpoints.p.rapidapi.com/post-search',
           params: {
             keywords: term,
             start: '0'
           },
           headers: {
             'x-rapidapi-key': apiKey,
-            'x-rapidapi-host': 'real-time-linkedin-scraper.p.rapidapi.com'
+            'x-rapidapi-host': 'linkedin-api-all-endpoints.p.rapidapi.com'
           }
         };
 
         const response = await axios.request(options);
-        const posts = response.data?.data || [];
+        // The new API typically returns results in an array under 'items' or directly
+        const posts = response.data?.items || response.data || [];
         
         console.info(`LinkedIn Scraper: Found ${posts.length} results for "${term}"`);
 

@@ -38,6 +38,12 @@ export class MonitorService {
           // Score and Normalize
           const scored = RelevanceScorer.score(raw, terms, keywords);
           
+          // CRITICAL: Only include post if it matched at least one of the user's Niche Keywords
+          if (scored.matchedKeywords.length === 0) {
+            console.debug(`Skipping post: No matching niche keywords found in "${scored.text.substring(0, 30)}..."`);
+            continue;
+          }
+
           // Optional: Filtering rules (e.g. skip if score too low)
           if (scored.relevanceScore < Number(process.env.RELEVANCE_THRESHOLD || 20)) continue;
 
