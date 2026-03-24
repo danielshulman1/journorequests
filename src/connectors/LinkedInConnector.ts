@@ -1,3 +1,4 @@
+import axios from "axios";
 import { PlatformConnector } from "./BaseConnector.js";
 
 export class LinkedInConnector extends PlatformConnector {
@@ -8,21 +9,56 @@ export class LinkedInConnector extends PlatformConnector {
   }
 
   async fetchPosts(terms: string[]): Promise<any[]> {
-    // LinkedIn official API for POST search is more restricted
-    // Often needs "Marketing Developer Platform" or "Shares API"
-    // For this demonstration, we'll return a mock and log the requirement
-    console.info("LinkedIn Connector Fetching (Stub)... To use real API, LinkedIn OAuth is required.");
-    return [
-      {
-        id: "li101",
-        text: "Is there a #chatbot expert who could give me a quick comment for my latest piece on digital strategy? #mediarequest ASAP",
-        authorName: "Mark Scribbler",
-        authorUrl: "https://www.linkedin.com/in/markscribbler",
-        postUrl: "https://www.linkedin.com/posts/markscribbler-101",
-        postedAt: new Date(Date.now() - 7200000).toISOString(),
-        platform: "LinkedIn",
-        engagement: { likes: 3, comments: 0 },
-      },
-    ];
+    const apiKey = process.env.RAPIDAPI_KEY;
+    if (!apiKey) {
+      console.warn("LinkedIn Scraper: RAPIDAPI_KEY not found. Skipping LinkedIn scan.");
+      return [];
+    }
+
+    console.info(`LinkedIn Scraper: Searching for ${terms.length} terms...`);
+    
+    let allPosts: any[] = [];
+
+    for (const term of terms) {
+      try {
+        const options = {
+          method: 'GET',
+          url: 'https://real-time-linkedin-scraper.p.rapidapi.com/search-posts',
+          params: {
+            keywords: term,
+            start: '0'
+          },
+          headers: {
+            'x-rapidapi-key': apiKey,
+            'x-rapidapi-host': 'real-time-linkedin-scraper.p.rapidapi.com'
+          }
+        };
+
+        const response = await axios.request(options);
+        const posts = response.data?.data || [];
+        
+        console.info(`LinkedIn Scraper: Found ${posts.length} results for "${term}"`);
+
+        const normalized = posts.map((post: any) => ({
+          id: post.post_id || post.urn,
+          text: post.text || "",
+          authorName: post.author_name || post.author_title || "LinkedIn User",
+          authorUrl: post.author_profile_url || "",
+          postUrl: post.post_url || `https://www.linkedin.com/feed/update/${post.urn}`,
+          postedAt: post.posted_at ? new Date(post.posted_at).toISOString() : new Date().toISOString(),
+          platform: "LinkedIn",
+          engagement: { 
+            likes: post.num_reactions || 0, 
+            comments: post.num_comments || 0 
+          },
+        }));
+
+        allPosts = [...allPosts, ...normalized];
+      } catch (error: any) {
+        console.error(`LinkedIn Scraper Error for term "${term}":`, error.response?.data || error.message);
+      }
+    }
+
+    return allPosts;
   }
 }
