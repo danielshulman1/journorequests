@@ -7,3 +7,5 @@ dist
 dev.db
 dev.db-journal
 *.js
+
+.vercel
