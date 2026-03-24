@@ -100,5 +100,10 @@ On always-on Node hosting, `SCHEDULER_TICK_CRON` handles automatic scans and dig
 - Keep `/api/cron` running on a schedule so per-user scans and digests continue in production.
 - The Docker startup on Render now runs `prisma db push` before starting the app, so a fresh Render Postgres database can bootstrap automatically.
 
+## Railway Deployment
+- This repo also includes `railway.json` and `.railwayignore` so Railway uses the `Dockerfile` path directly.
+- The container startup on Railway runs `prisma db push` before starting the app.
+- Set `APP_URL` to your Railway public domain and keep the same `DATABASE_URL`, Resend, and scraper credential env vars.
+
 ## Resend Domain Verification
 If you want to send to real recipients from `easy-ai.co.uk`, verify that domain inside Resend first. Until the domain is verified, Resend only allows sandbox/test sending and will reject normal delivery.

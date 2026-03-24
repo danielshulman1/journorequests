@@ -8,6 +8,7 @@
     "build": "npx prisma generate && tsc",
     "start": "node dist/index.js",
     "start:render": "npx prisma db push && node dist/index.js",
+    "start:railway": "npx prisma db push && node dist/index.js",
     "postinstall": "prisma generate",
     "vercel-build": "prisma generate",
     "prisma:generate": "prisma generate",

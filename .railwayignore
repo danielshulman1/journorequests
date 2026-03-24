@@ -1,0 +1,15 @@
+node_modules
+dist
+.git
+.vercel
+.env
+dev.db
+init.db
+server.out.log
+server.err.log
+test-x.ts
+test-x.js
+test-x.js.map
+test-x.d.ts
+test-x.d.ts.map
+.scraper-state
