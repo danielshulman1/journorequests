@@ -4,9 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
-    "build": "tsc",
+    "dev": "npx prisma generate && node --import=./register.js src/index.ts",
+    "build": "npx prisma generate && tsc",
     "start": "node dist/index.js",
+    "postinstall": "prisma generate",
+    "vercel-build": "prisma generate",
     "prisma:generate": "prisma generate",
     "prisma:push": "prisma db push"
   },
@@ -16,6 +18,7 @@
   "type": "module",
   "dependencies": {
     "@prisma/adapter-better-sqlite3": "^7.5.0",
+    "@prisma/adapter-pg": "^7.5.0",
     "@prisma/client": "^7.5.0",
     "axios": "^1.13.6",
     "better-sqlite3": "^12.8.0",
@@ -24,6 +27,7 @@
     "express": "^5.2.1",
     "node-cron": "^4.2.1",
     "nodemailer": "^8.0.3",
+    "pg": "^8.20.0",
     "tslib": "^2.8.1",
     "winston": "^3.19.0",
     "zod": "^4.3.6"
@@ -35,6 +39,7 @@
     "@types/node": "^25.5.0",
     "@types/node-cron": "^3.0.11",
     "@types/nodemailer": "^7.0.11",
+    "@types/pg": "^8.20.0",
     "nodemon": "^3.1.14",
     "prisma": "^7.5.0",
     "ts-node": "^10.9.2",

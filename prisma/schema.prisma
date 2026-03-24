@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,31 +5,27 @@ generator client {
 datasource db {
   provider = "sqlite"
 }
-筋
+
 model Post {
   id              String   @id @default(cuid())
   platform        String
   externalId      String   @unique
-  authorName      String
-  authorUrl       String
   text            String
-  postUrl         String   @unique
-  postedAt        DateTime
-  engagement      String?  // JSON stringified engagement metrics
-  matchedTerms    String   // Comma-separated search terms
-  matchedKeywords String?  // Comma-separated matched niche keywords
-  relevanceScore  Int      @default(0)
-  priority        String   @default("Low") // High, Medium, Low
+  authorName      String?
+  authorUrl       String?
+  postUrl         String
+  postedAt        DateTime?
+  discoveredAt    DateTime @default(now())
+  relevanceScore  Float    @default(0)
+  priority        String   @default("Low")
+  matchedTerms    String?
+  matchedKeywords String?
+  isSent          Boolean  @default(false)
+  sentAt          DateTime?
+  engagement      String?
   isUrgent        Boolean  @default(false)
   hasDeadline     Boolean  @default(false)
   isJournalist    Boolean  @default(false)
-  isSent          Boolean  @default(false)
-  sentAt          DateTime?
-  discoveredAt    DateTime @default(now())
-
-  @@index([platform])
-  @@index([priority])
-  @@index([isSent])
 }
 
 model SearchTerm {
@@ -45,6 +38,7 @@ model SearchTerm {
 model NicheKeyword {
   id        String   @id @default(cuid())
   keyword   String   @unique
+  weight    Float    @default(1.0)
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
 }
@@ -53,8 +47,9 @@ model RunLog {
   id             String   @id @default(cuid())
   startTime      DateTime @default(now())
   endTime        DateTime?
-  status         String   // SUCCESS, FAILURE
+  status         String   @default("running")
   resultsFound   Int      @default(0)
   resultsEmailed Int      @default(0)
   errorMessage   String?
+  platform       String?
 }

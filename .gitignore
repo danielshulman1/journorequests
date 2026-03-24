@@ -4,8 +4,5 @@ node_modules
 
 /generated/prisma
 dist
-dev.db
-dev.db-journal
-*.js
 
 .vercel

@@ -28,7 +28,7 @@ const adapter = new PrismaBetterSqlite3({ url: dbPath });
 export const prisma =
   globalForPrisma.prisma ||
   new PrismaClient({
-    adapter: adapter, // Use the pre-initialized adapter
+    adapter,
     log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
   });
 

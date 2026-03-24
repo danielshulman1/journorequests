@@ -34,11 +34,11 @@ export class SchedulerService {
       });
 
       if (pending.length > 0) {
-        const normalized = pending.map(p => ({
+        const normalized = pending.map((p) => ({
           ...p,
-          postedAt: new Date(p.postedAt),
-          matchedTerms: p.matchedTerms.split(", "),
-          matchedKeywords: p.matchedKeywords?.split(", ") || [],
+          postedAt: p.postedAt ? new Date(p.postedAt) : new Date(),
+          matchedTerms: (p.matchedTerms || "").split(", "),
+          matchedKeywords: (p.matchedKeywords || "").split(", "),
           priority: p.priority as any
         }));
 
